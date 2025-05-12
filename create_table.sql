@@ -1,3 +1,8 @@
+CREATE TABLE warranty (
+    warranty_id INT PRIMARY KEY AUTO_INCREMENT,
+    warranty_detail TEXT NOT NULL
+);
+
 -- Product table
 CREATE TABLE products (
     product_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -5,7 +10,9 @@ CREATE TABLE products (
     price DECIMAL(10, 2) NOT NULL,
     size INT NOT NULL,
     quantity INT NOT NULL,
-    description TEXT NOT NULL
+    description TEXT NOT NULL,
+    warranty_id INT,
+    FOREIGN KEY (warranty_id) REFERENCES warranty (warranty_id) ON DELETE SET NULL
 );
 
 CREATE TABLE discount (
@@ -60,12 +67,47 @@ CREATE TABLE product_color (
     FOREIGN KEY (color_id) REFERENCES color (color_id) ON DELETE CASCADE
 );
 
+CREATE TABLE model (
+    model_id INT PRIMARY KEY AUTO_INCREMENT,
+    model_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE product_model (
+    product_id INT,
+    model_id INT,
+    PRIMARY KEY (product_id, model_id),
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE,
+    FOREIGN KEY (model_id) REFERENCES model (model_id) ON DELETE CASCADE
+);
+
+CREATE TABLE brand (
+    brand_id INT PRIMARY KEY AUTO_INCREMENT,
+    brand_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE product_brand (
+    product_id INT,
+    brand_id INT,
+    PRIMARY KEY (product_id, brand_id),
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE,
+    FOREIGN KEY (brand_id) REFERENCES brand (brand_id) ON DELETE CASCADE
+);
+
+-- Registered user
+CREATE TABLE registered_user (
+    registered_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL UNIQUE,
+    password VARCHAR(64) -- Assuming using SHA-256 as hashing algorithm
+);
+
 -- User table
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
+    registered_id INT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(11) UNIQUE NOT NULL
+    phone VARCHAR(11) UNIQUE NOT NULL,
+    FOREIGN KEY (registered_id) REFERENCES registered_user (registered_id)
 );
 
 -- Address table
@@ -89,25 +131,27 @@ CREATE TABLE commune (
     FOREIGN KEY (district_id) REFERENCES district (district_id) ON DELETE CASCADE
 );
 
-CREATE TABLE addresses (
-    address_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    commune_id INT NOT NULL,
-    address TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (commune_id) REFERENCES commune (commune_id) ON DELETE CASCADE
-);
-
 -- Housing type table
 CREATE TABLE housing (
     housing_id INT PRIMARY KEY AUTO_INCREMENT,
     housing_type VARCHAR(9) NOT NULL UNIQUE
 );
 
-CREATE TABLE user_housing (
+CREATE TABLE addresses (
+    address_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
+    commune_id INT NOT NULL,
+    address TEXT NOT NULL,
     housing_id INT NOT NULL,
-    PRIMARY KEY (user_id, housing_id),
+    FOREIGN KEY (housing_id) REFERENCES housing (housing_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (housing_id) REFERENCES housing (housing_id) ON DELETE CASCADE
+    FOREIGN KEY (commune_id) REFERENCES commune (commune_id) ON DELETE CASCADE
 );
+
+-- CREATE TABLE user_housing (
+--     user_id INT NOT NULL,
+--     housing_id INT NOT NULL,
+--     PRIMARY KEY (user_id, housing_id),
+--     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+--     FOREIGN KEY (housing_id) REFERENCES housing (housing_id) ON DELETE CASCADE
+-- );
