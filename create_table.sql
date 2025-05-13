@@ -15,13 +15,14 @@ CREATE TABLE products (
 );
 
 CREATE TABLE discount (
-    discount_id VARCHAR(255) PRIMARY KEY,
+    discount_id INT PRIMARY KEY AUTO_INCREMENT,
+    discount_name VARCHAR(255) NOT NULL UNIQUE,
     discount_percentage FLOAT(3, 2) NOT NULL
 );
 
 CREATE TABLE product_discount (
-    discount_id VARCHAR(255),
-    product_id INT,
+    discount_id INT NOT NULL,
+    product_id INT NOT NULL,
     UNIQUE(discount_id, product_id),
     FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE,
     FOREIGN KEY (discount_id) REFERENCES discount (discount_id) ON DELETE CASCADE 
@@ -161,15 +162,17 @@ CREATE TABLE orders (
     receipt VARCHAR(3),
     payment VARCHAR(6) NOT NULL, -- "Cash" and "Online"
     total_price DECIMAL(10, 2) NOT NULL,
-    order_date DATETIME
+    order_date DATETIME,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE order_discount (
     order_id INT NOT NULL,
-    discount_id VARCHAR(255),
+    discount_id INT NOT NULL,
     UNIQUE(order_id, discount_id),
     FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE,
-    FOREIGN KEY (discount_id) REFERENCES discount (discount_id) ON DELETE SET NULL
+    FOREIGN KEY (discount_id) REFERENCES discount (discount_id) ON DELETE CASCADE
 );
 
 CREATE TABLE order_detail (
