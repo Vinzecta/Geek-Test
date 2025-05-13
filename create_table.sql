@@ -105,7 +105,7 @@ CREATE TABLE users (
     registered_id INT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    phone VARCHAR(11) UNIQUE NOT NULL,
+    phone DECIMAL(11, 0) UNIQUE NOT NULL,
     FOREIGN KEY (registered_id) REFERENCES registered_user (registered_id) ON DELETE SET NULL
 );
 
