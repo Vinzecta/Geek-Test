@@ -1,11 +1,11 @@
 CREATE TABLE warranty (
-    warranty_id INT PRIMARY KEY AUTO_INCREMENT,
+    warranty_id SERIAL PRIMARY KEY,
     warranty_detail TEXT NOT NULL
 );
 
 -- Product table
 CREATE TABLE products (
-    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     quantity INT NOT NULL,
@@ -16,9 +16,9 @@ CREATE TABLE products (
 );
 
 CREATE TABLE discount (
-    discount_id INT PRIMARY KEY AUTO_INCREMENT,
+    discount_id SERIAL PRIMARY KEY,
     discount_name VARCHAR(255) NOT NULL UNIQUE,
-    discount_percentage FLOAT(3, 2) NOT NULL
+    discount_percentage DECIMAL(3, 2) NOT NULL
 );
 
 CREATE TABLE product_discount (
@@ -30,7 +30,7 @@ CREATE TABLE product_discount (
 );
 
 CREATE TABLE store (
-    store_id INT PRIMARY KEY AUTO_INCREMENT,
+    store_id SERIAL PRIMARY KEY,
     product_quantity INT NOT NULL,
     store_address TEXT NOT NULL
 );
@@ -44,12 +44,12 @@ CREATE TABLE product_store (
 );
 
 CREATE TABLE color (
-    color_id INT PRIMARY KEY AUTO_INCREMENT,
+    color_id SERIAL PRIMARY KEY,
     color VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE category (
-    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_id SERIAL PRIMARY KEY,
     category_name VARCHAR(255) UNIQUE NOT NULL
 );
 
@@ -70,7 +70,7 @@ CREATE TABLE product_color (
 );
 
 CREATE TABLE model (
-    model_id INT PRIMARY KEY AUTO_INCREMENT,
+    model_id SERIAL PRIMARY KEY,
     model_name VARCHAR(255) NOT NULL
 );
 
@@ -83,7 +83,7 @@ CREATE TABLE product_model (
 );
 
 CREATE TABLE brand (
-    brand_id INT PRIMARY KEY AUTO_INCREMENT,
+    brand_id SERIAL PRIMARY KEY,
     brand_name VARCHAR(255) NOT NULL
 );
 
@@ -97,14 +97,14 @@ CREATE TABLE product_brand (
 
 -- Registered user
 CREATE TABLE registered_user (
-    registered_id INT PRIMARY KEY AUTO_INCREMENT,
+    registered_id SERIAL PRIMARY KEY,
     username VARCHAR(30) NOT NULL UNIQUE,
     password VARCHAR(64) -- Assuming using SHA-256 as hashing algorithm
 );
 
 -- User table
 CREATE TABLE users (
-    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id SERIAL PRIMARY KEY,
     registered_id INT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -114,19 +114,19 @@ CREATE TABLE users (
 
 -- Address table
 CREATE TABLE province (
-    province_id INT PRIMARY KEY AUTO_INCREMENT,
+    province_id SERIAL PRIMARY KEY,
     province_name VARCHAR(30) NOT NULL UNIQUE
 );
 
 CREATE TABLE district (
-    district_id INT PRIMARY KEY AUTO_INCREMENT,
+    district_id SERIAL PRIMARY KEY,
     district_name VARCHAR(20) NOT NULL,
     province_id INT NOT NULL,
     FOREIGN KEY (province_id) REFERENCES province (province_id) ON DELETE CASCADE
 );
 
 CREATE TABLE commune (
-    commune_id INT PRIMARY KEY AUTO_INCREMENT,
+    commune_id SERIAL PRIMARY KEY,
     commune_name VARCHAR(30) NOT NULL,
     district_id INT NOT NULL,
     UNIQUE(commune_name, district_id),
@@ -135,12 +135,12 @@ CREATE TABLE commune (
 
 -- Housing type table
 CREATE TABLE housing (
-    housing_id INT PRIMARY KEY AUTO_INCREMENT,
+    housing_id SERIAL PRIMARY KEY,
     housing_type VARCHAR(9) NOT NULL UNIQUE
 );
 
 CREATE TABLE addresses (
-    address_id INT PRIMARY KEY AUTO_INCREMENT,
+    address_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     commune_id INT NOT NULL,
     address TEXT NOT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE addresses (
 
 -- Order
 CREATE TABLE orders (
-    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
