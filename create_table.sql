@@ -9,21 +9,20 @@ CREATE TABLE products (
     name TEXT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     size INT NOT NULL,
-    quantity INT NOT NULL,
     description TEXT NOT NULL,
     warranty_id INT,
     FOREIGN KEY (warranty_id) REFERENCES warranty (warranty_id) ON DELETE SET NULL
 );
 
 CREATE TABLE discount (
-    discount_id INT PRIMARY KEY AUTO_INCREMENT,
+    discount_id VARCHAR(255) PRIMARY KEY,
     discount_percentage FLOAT(3, 2) NOT NULL
 );
 
 CREATE TABLE product_discount (
-    discount_id INT,
+    discount_id VARCHAR(255),
     product_id INT,
-    PRIMARY KEY (discount_id, product_id),
+    UNIQUE(discount_id, product_id),
     FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE,
     FOREIGN KEY (discount_id) REFERENCES discount (discount_id) ON DELETE CASCADE 
 );
@@ -107,7 +106,7 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(11) UNIQUE NOT NULL,
-    FOREIGN KEY (registered_id) REFERENCES registered_user (registered_id)
+    FOREIGN KEY (registered_id) REFERENCES registered_user (registered_id) ON DELETE SET NULL
 );
 
 -- Address table
@@ -148,10 +147,36 @@ CREATE TABLE addresses (
     FOREIGN KEY (commune_id) REFERENCES commune (commune_id) ON DELETE CASCADE
 );
 
--- CREATE TABLE user_housing (
---     user_id INT NOT NULL,
---     housing_id INT NOT NULL,
---     PRIMARY KEY (user_id, housing_id),
---     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
---     FOREIGN KEY (housing_id) REFERENCES housing (housing_id) ON DELETE CASCADE
--- );
+-- Order
+CREATE TABLE order_type (
+    order_type_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_type_name VARCHAR(22) NOT NULL UNIQUE
+);
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_type_id INT NOT NULL,
+    FOREIGN KEY (order_type_id) REFERENCES order_type (order_type_id) ON DELETE CASCADE,
+    note TEXT,
+    receipt VARCHAR(3),
+    payment VARCHAR(6) NOT NULL, -- "Cash" and "Online"
+    total_price DECIMAL(10, 2) NOT NULL,
+    order_date DATETIME
+);
+
+CREATE TABLE order_discount (
+    order_id INT NOT NULL,
+    discount_id VARCHAR(255),
+    UNIQUE(order_id, discount_id),
+    FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE,
+    FOREIGN KEY (discount_id) REFERENCES discount (discount_id) ON DELETE SET NULL
+);
+
+CREATE TABLE order_detail (
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    PRIMARY KEY (order_id, product_id),
+    FOREIGN KEY (order_id) REFERENCES orders (order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
+);
